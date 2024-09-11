@@ -61,7 +61,9 @@ function Board({ toDos, boardId }: IBoard) {
     const newToDo = { id: Date.now(), text: toDo };
     setToDos((curBoards) => {
       const newBoard = [...curBoards[boardId], newToDo];
-      return { ...curBoards, [boardId]: newBoard };
+      const newWholeBoards = { ...curBoards, [boardId]: newBoard };
+      localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+      return newWholeBoards;
     });
     setValue("toDo", "");
   };

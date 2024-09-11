@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { toDoState } from "./atoms";
 import Board from "./components/Board";
+import { useEffect } from "react";
 
 const Wrapper = styled.div`
   display: flex;
@@ -32,7 +33,7 @@ const Boards = styled.div`
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const onDragEnd = (info: DropResult) => {
-    console.log(info);
+    // console.log(info);
     const { destination, source } = info;
     if (!destination) return;
     if (destination?.droppableId === source.droppableId) {
@@ -41,10 +42,12 @@ function App() {
         const newBoard = [...curBoards[source.droppableId]];
         const targetToDo = newBoard.splice(source.index, 1)[0];
         newBoard.splice(destination.index, 0, targetToDo);
-        return {
+        const newWholeBoards = {
           ...curBoards,
           [source.droppableId]: newBoard,
         };
+        localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+        return newWholeBoards;
       });
     }
     if (destination.droppableId !== source.droppableId) {
@@ -54,14 +57,24 @@ function App() {
         const destBoard = [...curBoards[destination.droppableId]];
         const targetToDo = sourceBoard.splice(source.index, 1)[0];
         destBoard.splice(destination.index, 0, targetToDo);
-        return {
+        const newWholeBoards = {
           ...curBoards,
           [source.droppableId]: sourceBoard,
           [destination.droppableId]: destBoard,
         };
+        localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+        return newWholeBoards;
       });
     }
   };
+
+  useEffect(() => {
+    const storedBoardsString = localStorage.getItem("Boards");
+    if (storedBoardsString) {
+      setToDos(JSON.parse(storedBoardsString));
+    }
+  }, []);
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
@@ -81,4 +94,3 @@ export default App;
 // 2. Implement delete (tash can)
 // 3. Implement droppable board
 // 4. Implement user-defined boards
-// 5. localStorage
