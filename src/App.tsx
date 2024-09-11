@@ -4,9 +4,11 @@ import styled from "styled-components";
 import { toDoState } from "./atoms";
 import Board from "./components/Board";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100vw;
   margin: 0 auto;
   justify-content: center;
@@ -15,11 +17,41 @@ const Wrapper = styled.div`
   padding: 0px 10%;
 `;
 
+const Header = styled.div`
+  width: 100vw;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Form = styled.form`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Input = styled.input`
+  border-radius: 10px;
+  width: 70%;
+  height: 50px;
+  border: none;
+  padding: 0px 15px;
+  transition: box-shadow 0.3s ease-in;
+  &:focus {
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.7);
+  }
+`;
+
 const Boards = styled.div`
   display: grid;
   width: 100%;
   grid-template-columns: repeat(3, 1fr);
   gap: 4%;
+  overflow-y: auto;
+  margin-bottom: 30px;
+  scrollbar-width: none;
   // fr은 그리드 컨테이너의 가용 공간을 비율로 나누는 단위
 
   // repeat(3, fr): 가용 공간을 1/3씩 나눠 쓰겠다.
@@ -30,8 +62,26 @@ const Boards = styled.div`
   // 가용 공간을 6등분한 뒤, 4개의 열에 각각 1/6, 2/6, 1/6, 2/6씩 할당
 `;
 
+interface ICategory {
+  newCategoryKey: string;
+}
+
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
+  const { register, setValue, handleSubmit } = useForm<ICategory>();
+  const onCategorySubmit = ({ newCategoryKey }: ICategory) => {
+    if (newCategoryKey === "") return;
+    if (newCategoryKey in toDos) {
+      setValue("newCategoryKey", "");
+      return;
+    }
+    const newWholeBoards = { ...toDos, [newCategoryKey]: [] };
+    localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+    setToDos(newWholeBoards);
+    setValue("newCategoryKey", "");
+    // console.log(categories);
+  };
+
   const onDragEnd = (info: DropResult) => {
     // console.log(info);
     const { destination, source } = info;
@@ -78,6 +128,15 @@ function App() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
+        <Header>
+          <Form onSubmit={handleSubmit(onCategorySubmit)}>
+            <Input
+              {...register("newCategoryKey")}
+              placeholder="Create your own categories"
+              autoComplete="off"
+            />
+          </Form>
+        </Header>
         <Boards>
           {Object.keys(toDos).map((boardId) => (
             <Board key={boardId} boardId={boardId} toDos={toDos[boardId]} />

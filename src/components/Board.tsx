@@ -76,6 +76,7 @@ function Board({ toDos, boardId }: IBoard) {
           {...register("toDo", { required: true })}
           type="text"
           placeholder={`Add a task on ${boardId}`}
+          autoComplete="off"
         />
       </Form>
       <Droppable droppableId={boardId}>

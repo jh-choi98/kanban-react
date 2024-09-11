@@ -67,6 +67,9 @@ a {
 * {
   box-sizing: border-box;
 }
+input:focus {
+  outline: none;
+}
 `;
 
 const root = ReactDOM.createRoot(
