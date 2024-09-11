@@ -79,7 +79,6 @@ function App() {
     localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
     setToDos(newWholeBoards);
     setValue("newCategoryKey", "");
-    // console.log(categories);
   };
 
   const onDragEnd = (info: DropResult) => {
