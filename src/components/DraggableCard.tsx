@@ -14,25 +14,31 @@ const Card = styled.div<{ isDragging: boolean }>`
 
   box-shadow: ${(props) =>
     props.isDragging ? "0px 2px 5px rgba(0, 0, 0, 0.4)" : "none"};
+  font-size: 20px;
+  position: relative;
 `;
 
 const Button = styled.button`
   border: none;
   background-color: inherit;
   opacity: 0.9;
+  position: absolute;
+  right: 20px;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+  &:hover {
+    opacity: 1;
+  }
 `;
 
 interface ICard {
   toDoId: number;
   toDoText: string;
   index: number;
-  onDelete: (id: number) => void;
+  onDeleteCard: (id: number) => void;
 }
 
-function DraggableCard({ toDoId, toDoText, index, onDelete }: ICard) {
-  const deleteTask = () => {
-    onDelete(toDoId);
-  };
+function DraggableCard({ toDoId, toDoText, index, onDeleteCard }: ICard) {
   return (
     <Draggable key={toDoId} draggableId={toDoId + ""} index={index}>
       {/* key에 index를 사용해서는 안 된다. */}
@@ -49,7 +55,7 @@ function DraggableCard({ toDoId, toDoText, index, onDelete }: ICard) {
           {...provided.dragHandleProps}
           {...provided.draggableProps}>
           {toDoText}
-          <Button onClick={deleteTask}>
+          <Button onClick={() => onDeleteCard(toDoId)}>
             <FontAwesomeIcon icon={faTrash} />
           </Button>
         </Card>

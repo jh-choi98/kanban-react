@@ -1,9 +1,6 @@
+import { IToDoState } from "./atoms";
+
 // store in local storage
-
-// generate new boards
-
-function utils() {
-  return;
+export function saveLocalStorage(WholeBoards: IToDoState) {
+  localStorage.setItem("Boards", JSON.stringify(WholeBoards));
 }
-
-export default utils;

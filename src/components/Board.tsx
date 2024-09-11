@@ -4,6 +4,9 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { IToDo, toDoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { saveLocalStorage } from "../utils";
 
 const Wrapper = styled.div`
   padding-top: 10px;
@@ -13,6 +16,7 @@ const Wrapper = styled.div`
   min-height: 40vh;
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 
 const Title = styled.h1`
@@ -21,6 +25,8 @@ const Title = styled.h1`
   font-weight: bold;
   font-size: 20px;
 `;
+
+const Button = styled.button``;
 
 const Area = styled.div<IArea>`
   background-color: ${(props) =>
@@ -38,12 +44,16 @@ const Form = styled.form`
   width: 100%;
   input {
     width: 100%;
+    height: 30px;
+    padding: 0px 7px;
+    border: none;
   }
 `;
 
 interface IBoard {
   toDos: IToDo[];
   boardId: string;
+  onDeleteBoard: (boardId: string) => void;
 }
 
 interface IArea {
@@ -55,7 +65,7 @@ interface IForm {
   toDo: string;
 }
 
-function Board({ toDos, boardId }: IBoard) {
+function Board({ toDos, boardId, onDeleteBoard }: IBoard) {
   const setToDos = useSetRecoilState(toDoState);
   const { register, setValue, handleSubmit } = useForm<IForm>();
   const onValid = ({ toDo }: IForm) => {
@@ -63,22 +73,27 @@ function Board({ toDos, boardId }: IBoard) {
     setToDos((curBoards) => {
       const newBoard = [...curBoards[boardId], newToDo];
       const newWholeBoards = { ...curBoards, [boardId]: newBoard };
-      localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+      saveLocalStorage(newWholeBoards);
       return newWholeBoards;
     });
     setValue("toDo", "");
   };
-  const handleDelete = (id: number) => {
+
+  const handleDeleteCard = (cardId: number) => {
     setToDos((curBoards) => {
-      const newBoard = curBoards[boardId].filter((toDo) => toDo.id !== id);
+      const newBoard = curBoards[boardId].filter((toDo) => toDo.id !== cardId);
       const newWholeBoards = { ...curBoards, [boardId]: newBoard };
-      localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+      saveLocalStorage(newWholeBoards);
       return newWholeBoards;
     });
   };
+
   return (
     <Wrapper>
       <Title>{boardId}</Title>
+      <Button onClick={() => onDeleteBoard(boardId)}>
+        <FontAwesomeIcon icon={faTrash} />
+      </Button>
       <Form onSubmit={handleSubmit(onValid)}>
         <input
           {...register("toDo", { required: true })}
@@ -100,7 +115,7 @@ function Board({ toDos, boardId }: IBoard) {
                 toDoId={toDo.id}
                 toDoText={toDo.text}
                 index={index}
-                onDelete={handleDelete}
+                onDeleteCard={handleDeleteCard}
               />
             ))}
             {provided.placeholder}

@@ -5,6 +5,7 @@ import { toDoState } from "./atoms";
 import Board from "./components/Board";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { saveLocalStorage } from "./utils";
 
 const Wrapper = styled.div`
   display: flex;
@@ -77,7 +78,7 @@ function App() {
       return;
     }
     const newWholeBoards = { ...toDos, [newCategoryKey]: [] };
-    localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+    saveLocalStorage(newWholeBoards);
     setToDos(newWholeBoards);
     setValue("newCategoryKey", "");
   };
@@ -96,7 +97,7 @@ function App() {
           ...curBoards,
           [source.droppableId]: newBoard,
         };
-        localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+        saveLocalStorage(newWholeBoards);
         return newWholeBoards;
       });
     }
@@ -112,10 +113,18 @@ function App() {
           [source.droppableId]: sourceBoard,
           [destination.droppableId]: destBoard,
         };
-        localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+        saveLocalStorage(newWholeBoards);
         return newWholeBoards;
       });
     }
+  };
+
+  const handleDeleteBoard = (boardId: string) => {
+    setToDos((curBoards) => {
+      const { [boardId]: _, ...newWholeBoards } = curBoards;
+      saveLocalStorage(newWholeBoards);
+      return newWholeBoards;
+    });
   };
 
   useEffect(() => {
@@ -139,7 +148,12 @@ function App() {
         </Header>
         <Boards>
           {Object.keys(toDos).map((boardId) => (
-            <Board key={boardId} boardId={boardId} toDos={toDos[boardId]} />
+            <Board
+              key={boardId}
+              boardId={boardId}
+              toDos={toDos[boardId]}
+              onDeleteBoard={handleDeleteBoard}
+            />
           ))}
         </Boards>
       </Wrapper>
