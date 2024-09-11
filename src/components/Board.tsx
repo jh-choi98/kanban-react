@@ -8,6 +8,7 @@ import { useSetRecoilState } from "recoil";
 const Wrapper = styled.div`
   padding-top: 10px;
   background-color: ${(props) => props.theme.boardColor};
+  overflow-y: auto;
   border-radius: 5px;
   min-height: 40vh;
   display: flex;
@@ -67,7 +68,14 @@ function Board({ toDos, boardId }: IBoard) {
     });
     setValue("toDo", "");
   };
-
+  const handleDelete = (id: number) => {
+    setToDos((curBoards) => {
+      const newBoard = curBoards[boardId].filter((toDo) => toDo.id !== id);
+      const newWholeBoards = { ...curBoards, [boardId]: newBoard };
+      localStorage.setItem("Boards", JSON.stringify(newWholeBoards));
+      return newWholeBoards;
+    });
+  };
   return (
     <Wrapper>
       <Title>{boardId}</Title>
@@ -92,6 +100,7 @@ function Board({ toDos, boardId }: IBoard) {
                 toDoId={toDo.id}
                 toDoText={toDo.text}
                 index={index}
+                onDelete={handleDelete}
               />
             ))}
             {provided.placeholder}

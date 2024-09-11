@@ -23,6 +23,7 @@ const Header = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 const Form = styled.form`
@@ -47,7 +48,7 @@ const Input = styled.input`
 const Boards = styled.div`
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 4%;
   overflow-y: auto;
   margin-bottom: 30px;
@@ -151,4 +152,3 @@ export default App;
 // 1. Make it pretty
 // 2. Implement delete (tash can)
 // 3. Implement droppable board
-// 4. Implement user-defined boards

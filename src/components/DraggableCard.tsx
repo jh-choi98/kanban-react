@@ -1,3 +1,5 @@
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { memo } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
@@ -14,13 +16,23 @@ const Card = styled.div<{ isDragging: boolean }>`
     props.isDragging ? "0px 2px 5px rgba(0, 0, 0, 0.4)" : "none"};
 `;
 
+const Button = styled.button`
+  border: none;
+  background-color: inherit;
+  opacity: 0.9;
+`;
+
 interface ICard {
   toDoId: number;
   toDoText: string;
   index: number;
+  onDelete: (id: number) => void;
 }
 
-function DraggableCard({ toDoId, toDoText, index }: ICard) {
+function DraggableCard({ toDoId, toDoText, index, onDelete }: ICard) {
+  const deleteTask = () => {
+    onDelete(toDoId);
+  };
   return (
     <Draggable key={toDoId} draggableId={toDoId + ""} index={index}>
       {/* key에 index를 사용해서는 안 된다. */}
@@ -28,6 +40,7 @@ function DraggableCard({ toDoId, toDoText, index }: ICard) {
         <Card
           isDragging={snapshot.isDragging}
           ref={provided.innerRef}
+          id={toDoId + ""}
           // react에서 특정 DOM 요소에 직접 접근할 수 있도록 참조를 설정하는 역할
           // Drag & Drop 요소가 제대로 동작하도록, innerRef가 드래그 가능한
           // Card component에 전달되고 있다
@@ -36,6 +49,9 @@ function DraggableCard({ toDoId, toDoText, index }: ICard) {
           {...provided.dragHandleProps}
           {...provided.draggableProps}>
           {toDoText}
+          <Button onClick={deleteTask}>
+            <FontAwesomeIcon icon={faTrash} />
+          </Button>
         </Card>
       )}
     </Draggable>
