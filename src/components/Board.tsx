@@ -4,9 +4,8 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { IToDo, toDoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { saveLocalStorage } from "../utils";
+import TrashCan from "./TrashCan";
 
 const Wrapper = styled.div`
   padding-top: 10px;
@@ -25,8 +24,6 @@ const Title = styled.h1`
   font-weight: bold;
   font-size: 20px;
 `;
-
-const Button = styled.button``;
 
 const Area = styled.div<IArea>`
   background-color: ${(props) =>
@@ -91,9 +88,7 @@ function Board({ toDos, boardId, onDeleteBoard }: IBoard) {
   return (
     <Wrapper>
       <Title>{boardId}</Title>
-      <Button onClick={() => onDeleteBoard(boardId)}>
-        <FontAwesomeIcon icon={faTrash} />
-      </Button>
+      <TrashCan onDelete={() => onDeleteBoard(boardId)} />
       <Form onSubmit={handleSubmit(onValid)}>
         <input
           {...register("toDo", { required: true })}

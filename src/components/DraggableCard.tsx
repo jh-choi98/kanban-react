@@ -1,8 +1,7 @@
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { memo } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
+import TrashCan from "./TrashCan";
 
 const Card = styled.div<{ isDragging: boolean }>`
   border-radius: 5px;
@@ -16,19 +15,6 @@ const Card = styled.div<{ isDragging: boolean }>`
     props.isDragging ? "0px 2px 5px rgba(0, 0, 0, 0.4)" : "none"};
   font-size: 20px;
   position: relative;
-`;
-
-const Button = styled.button`
-  border: none;
-  background-color: inherit;
-  opacity: 0.9;
-  position: absolute;
-  right: 20px;
-  opacity: 0.5;
-  transition: opacity 0.3s ease-in-out;
-  &:hover {
-    opacity: 1;
-  }
 `;
 
 interface ICard {
@@ -55,9 +41,7 @@ function DraggableCard({ toDoId, toDoText, index, onDeleteCard }: ICard) {
           {...provided.dragHandleProps}
           {...provided.draggableProps}>
           {toDoText}
-          <Button onClick={() => onDeleteCard(toDoId)}>
-            <FontAwesomeIcon icon={faTrash} />
-          </Button>
+          <TrashCan onDelete={() => onDeleteCard(toDoId)} />
         </Card>
       )}
     </Draggable>
